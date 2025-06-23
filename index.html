@@ -17,13 +17,26 @@
       color: #333;
     }
 
-    .filter-bar {
+    .filter-section {
       max-width: 1100px;
       margin: 0 auto 20px;
       display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .filter-group {
+      display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      justify-content: center;
+      justify-content: flex-start;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .filter-label {
+      font-weight: bold;
+      margin-right: 10px;
     }
 
     .filter-btn {
@@ -32,6 +45,7 @@
       padding: 6px 12px;
       border-radius: 4px;
       cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
     }
 
     .filter-btn.selected {
@@ -95,10 +109,10 @@
   </style>
 </head>
 <body>
-  
+
   <h2>轉介心理師篩選系統</h2>
 
-  <div class="filter-bar" id="filterButtons"></div>
+  <div class="filter-section" id="filterSection"></div>
   <div class="selected-names" id="selectedNames">請根據個案方便時間點選一格以上，並點選篩選條件，查看所有適合心理師</div>
 
   <div class="container">
@@ -120,37 +134,52 @@
     const allTherapists = ["正之", "書正", "佑齊", "益誌", "牧凡", "嘉成", "俊濠", "鈞皓", "泰國", "李威", "浩恩", "哲嘉", "Chris", "承蘭", "婉禎", "美莉", "玟秀", "郁芬", "惠蓉", "柏瑩", "貞瑩", "品妤", "菡瑜", "施韻", "思均", "李瑞", "詩維", "郁秀", "瑛琪", "妤苑", "又綺", "品如", "御儂", "愛迪", "瀞尹", "昭瑞", "蔚宸", "琬渝", "棻卿", "淑蘭", "光佩", "欣儀", "玉如", "盈盈", "紅鶯"];
 
     const filters = {
-      "伴侶": ["柏瑩", "愛迪", "俊濠", "鈞皓", "棻卿", "淑蘭", "瑛琪", "光佩", "玉如", "泰國", "紅鶯"],
-      "家庭": ["瑛琪", "棻卿", "淑蘭", "光佩", "紅鶯"],
-      "大學生方案": ["承蘭", "益誌", "貞瑩", "品妤", "佑齊", "菡瑜", "思均", "詩維", "李瑞", "柏瑩", "俊濠"],
-      "衡鑑": ["品如", "又綺", "郁秀", "愛迪", "琬渝", "鈞皓", "光佩"],
-      "男": ["正之", "書正", "佑齊", "益誌", "牧凡", "嘉成", "俊濠", "鈞皓", "泰國", "李威", "浩恩", "哲嘉", "Chris"],
-      "女": ["承蘭", "婉禎", "美莉", "玟秀", "郁芬", "惠蓉", "柏瑩", "貞瑩", "品妤", "菡瑜", "施韻", "思均", "李瑞", "詩維", "郁秀", "瑛琪", "妤苑", "又綺", "品如", "御儂", "愛迪", "瀞尹", "昭瑞", "蔚宸", "琬渝", "棻卿", "淑蘭", "光佩", "欣儀", "玉如", "盈盈", "紅鶯"],
-      "3000": ["御儂", "蔚宸", "琬渝", "鈞皓", "棻卿", "淑蘭", "泰國", "李威", "光佩", "欣儀"],
-      "3500": ["玉如", "盈盈", "紅鶯", "浩恩", "哲嘉"],
-      "英文": ["牧凡", "郁秀", "御儂", "俊濠", "盈盈", "哲嘉"]
+      "價錢": {
+        "2500": [],
+        "3000": ["御儂", "蔚宸", "琬渝", "鈞皓", "棻卿", "淑蘭", "泰國", "李威", "光佩", "欣儀"],
+        "3500": ["玉如", "盈盈", "紅鶯", "浩恩", "哲嘉"]
+      },
+      "類型": {
+        "伴侶": ["柏瑩", "愛迪", "俊濠", "鈞皓", "棻卿", "淑蘭", "瑛琪", "光佩", "玉如", "泰國", "紅鶯"],
+        "家庭": ["瑛琪", "棻卿", "淑蘭", "光佩", "紅鶯"],
+        "大學生方案": ["承蘭", "益誌", "貞瑩", "品妤", "佑齊", "菡瑜", "思均", "詩維", "李瑞", "柏瑩", "俊濠"],
+        "衡鑑": ["品如", "又綺", "郁秀", "愛迪", "琬渝", "鈞皓", "光佩"]
+      },
+      "性別": {
+        "男": ["正之", "書正", "佑齊", "益誌", "牧凡", "嘉成", "俊濠", "鈞皓", "泰國", "李威", "浩恩", "哲嘉", "Chris"],
+        "女": ["承蘭", "婉禎", "美莉", "玟秀", "郁芬", "惠蓉", "柏瑩", "貞瑩", "品妤", "菡瑜", "施韻", "思均", "李瑞", "詩維", "郁秀", "瑛琪", "妤苑", "又綺", "品如", "御儂", "愛迪", "瀞尹", "昭瑞", "蔚宸", "琬渝", "棻卿", "淑蘭", "光佩", "欣儀", "玉如", "盈盈", "紅鶯"]
+      },
+      "語言": {
+        "英文": ["牧凡", "郁秀", "御儂", "俊濠", "盈盈", "哲嘉"]
+      }
     };
-    filters["2500"] = allTherapists.filter(n => !filters["3000"].includes(n) && !filters["3500"].includes(n));
+    filters["價錢"]["2500"] = allTherapists.filter(n => !filters["價錢"]["3000"].includes(n) && !filters["價錢"]["3500"].includes(n));
 
-    let selectedFilterKeys = new Set();
+    const selectedFilters = { "價錢": null, "類型": null, "性別": null, "語言": null };
 
     function renderFilterButtons() {
-      const container = document.getElementById("filterButtons");
-      Object.keys(filters).forEach(key => {
-        const btn = document.createElement("button");
-        btn.className = "filter-btn";
-        btn.innerText = key;
-        btn.onclick = () => {
-          btn.classList.toggle('selected');
-          const key = btn.innerText;
-          if (selectedFilterKeys.has(key)) {
-            selectedFilterKeys.delete(key);
-          } else {
-            selectedFilterKeys.add(key);
-          }
-          updateSelectedNames();
-        };
-        container.appendChild(btn);
+      const container = document.getElementById("filterSection");
+      container.innerHTML = '';
+      Object.entries(filters).forEach(([group, options]) => {
+        const groupDiv = document.createElement("div");
+        groupDiv.className = "filter-group";
+        const label = document.createElement("span");
+        label.className = "filter-label";
+        label.textContent = group + ":";
+        groupDiv.appendChild(label);
+        Object.keys(options).forEach(option => {
+          const btn = document.createElement("button");
+          btn.className = "filter-btn";
+          btn.innerText = option;
+          btn.onclick = () => {
+            selectedFilters[group] = selectedFilters[group] === option ? null : option;
+            renderFilterButtons();
+            updateSelectedNames();
+          };
+          if (selectedFilters[group] === option) btn.classList.add("selected");
+          groupDiv.appendChild(btn);
+        });
+        container.appendChild(groupDiv);
       });
     }
 
@@ -223,12 +252,14 @@
       const allNames = Array.from(nameSet).filter(name => name);
       let text = allNames.length ? '聯集心理師：' + allNames.join('、') : '請根據個案方便時間點選一格以上，並點選篩選條件，查看可轉介心理師';
 
-      if (selectedFilterKeys.size > 0) {
-        let intersect = allNames.slice();
-        selectedFilterKeys.forEach(key => {
-          const allowed = filters[key];
-          intersect = intersect.filter(name => allowed.includes(name));
-        });
+      let intersect = allNames.slice();
+      Object.entries(selectedFilters).forEach(([group, selected]) => {
+        if (!selected) return;
+        const allowed = filters[group][selected];
+        intersect = intersect.filter(name => allowed.includes(name));
+      });
+
+      if (Object.values(selectedFilters).some(Boolean)) {
         text += '\n\n✅ 可轉介心理師：' + (intersect.length ? intersect.join('、') : '無符合條件者');
       }
 
