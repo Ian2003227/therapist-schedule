@@ -245,7 +245,7 @@
         const row = table?.rows?.[r];
         const cell = row?.cells?.[c];
         if (!cell) return;
-        const names = cell.textContent.trim().split(/\s+/);
+        const names = cell.textContent.trim().split(/[、\s]+/);
         names.forEach(name => nameSet.add(name));
       });
 
@@ -268,3 +268,4 @@
   </script>
 </body>
 </html>
+
